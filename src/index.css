@@ -1,0 +1,149 @@
+body {
+  margin: 0;
+  font-family: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page-wrap {
+  min-height: 80vh;
+}
+
+a{
+  text-decoration: none !important;
+}
+
+.form-control{
+	height: 41px;
+}
+
+.entry-meta {
+  font-size: 12px
+}
+
+.entry-thumbnail {
+  overflow: hidden;
+}
+
+.entry-title a, .entry-meta a {
+  color: #000;
+}
+
+.entry-content {
+  color: #888;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.post {
+  overflow: hidden;
+  border-radius: 3px;
+  margin-top: 30px;
+  background-color: #fff;
+  border-bottom: 2px solid #f2f3f5;
+  -webkit-transition: all .5s ease-in-out;
+  -moz-transition: all .5s ease-in-out;
+  -ms-transition: all .5s ease-in-out;
+  -o-transition: all .5s ease-in-out;
+  transition: all .5s ease-in-out
+}
+
+.post:hover {
+  border-bottom: 2px solid #eee
+}
+
+
+.post .entry-title {
+  font-size: 18px;
+  text-transform: capitalize;
+  margin-bottom: 20px;
+  margin-top: 12px;
+}
+
+
+.post-content {
+  padding: 30px 25px
+}
+
+.post-content i {
+  margin-right: 5px;
+}
+
+
+.catagory {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2
+}
+
+.catagory a {
+  color: #fff;
+  display: block;
+  padding: 3px 12px;
+  font-size: 12px;
+  text-transform: uppercase
+}
+
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+}
+
+ul.list-inline li {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+
+.tag {
+  background-color: #ccc;
+  color: #fff;
+  border-radius: 50px;
+  font-size: 11px !important;
+  margin: 0;
+  padding: 2px 10px;
+  text-transform: uppercase;
+}
+
+
+.blog-card {
+	background: #fff;
+  border-radius: 10px;
+	overflow: hidden;
+	border: 0 !important;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+.blog-card .blog-thumbnail {
+	width: 100%;
+	height: 200px;
+	object-fit: cover;
+}
+.blog-card .blog-container{
+	/* padding: 30px; */
+	position: relative;
+	padding-bottom: 70px;
+}
+.blog-card a:hover {
+	text-decoration: none;
+	color: #0062cc;
+}
+.blog-card .dark-link {
+	color: #333;
+}
+.blog-card .blog-desc {
+	color: #8b949d;
+}
+.blog-card .user-info {
+	height: 30px;
+	width: 30px;
+	border-radius: 30px;
+	margin-right: 5px;
+}
+.user-info h5 {
+  font-size: 16px;
+  margin: 0;
+}
+.user-info small {
+  color: #888785;
+}
