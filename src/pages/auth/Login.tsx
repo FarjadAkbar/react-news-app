@@ -4,91 +4,125 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Container, Row, Col, Nav } from "react-bootstrap";
 import Cookies from "js-cookie";
+import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "../../AuthContext";
 import { useLogin } from "../../api";
 
 const Login = () => {
   const navigate = useNavigate();
   const { loginSet } = useContext(AuthContext);
+  const { isLoggedIn, logout } = useContext(AuthContext);
   const { mutate, isLoading } = useLogin();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [emailState, setEmailState] = useState({
+    email: "",
+    emailError: "",
+    emailValid: false
+  });
+
+  const [passwordState, setPasswordState] = useState({
+    password: "",
+    passwordError: "",
+    passwordValid: false
+  });
+
   const [remember, setRemember] = useState(false);
-
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const [emailValid, setEmailValid] = useState(false);
-  const [passwordValid, setPasswordValid] = useState(false);
 
   const validateEmail = () => {
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    const { email } = emailState;
     if (!email) {
-      setEmailError("Email is required");
-      setEmailValid(true);
+      setEmailState({
+        email: email,
+        emailError: "Email is required",
+        emailValid: true
+      });
     } else if (!emailRegex.test(email)) {
-      setEmailError("Invalid email address");
-      setEmailValid(true);
+      setEmailState({
+        email: email,
+        emailError: "Invalid email address",
+        emailValid: true
+      });
     } else {
-      setEmailError("");
-      setEmailValid(false);
+      setEmailState({
+        email: email,
+        emailError: "",
+        emailValid: false
+      });
     }
   };
 
   const validatePassword = () => {
+    const { password } = passwordState;
     if (!password) {
-      setPasswordError("Password is required");
-      setPasswordValid(true);
+      setPasswordState({
+        password: password,
+        passwordError: "Password is required",
+        passwordValid: true
+      });
     } else if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
-      setPasswordValid(true);
+      setPasswordState({
+        password: password,
+        passwordError: "Password must be at least 8 characters long",
+        passwordValid: true
+      });
     } else {
-      setPasswordError("");
-      setPasswordValid(false);
+      setPasswordState({
+        password: password,
+        passwordError: "",
+        passwordValid: false
+      });
     }
   };
 
   const handleValidation = () => {
     validateEmail();
     validatePassword();
-    if (emailError || passwordError) {
+    if (emailState.emailError || passwordState.passwordError) {
       return false;
     }
     return true;
   };
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
+const handleSubmit = async (e: { preventDefault: () => void }) => {
+  e.preventDefault();
 
-    if (handleValidation()) {
-      mutate(
-        { email: email, password: password, remember: remember },
-        {
-          onSuccess: (response: { data: { user: any; token: any } }) => {
-            const { user, token } = response.data;
-            if (remember) {
-              Cookies.set("users", JSON.stringify(user), { expires: 365 });
-              Cookies.set("token", token, { expires: 365 });
-            } else {
-              Cookies.set("users", JSON.stringify(user), { expires: 1 });
-              Cookies.set("token", token, { expires: 1 });
-            }
+  const email = emailState.email;
+  const password = passwordState.password;
 
-            loginSet();
-            
-            setEmail("");
-            setPassword("");
+  if (handleValidation()) {
+    mutate(
+      { email: email, password: password, remember: remember },
+      {
+        onSuccess: (response: { data: { user: any; token: any } }) => {
+          const { user, token } = response.data;
+          if (remember) {
+            Cookies.set("users", JSON.stringify(user), { expires: 365 });
+            Cookies.set("token", token, { expires: 365 });
+          } else {
+            Cookies.set("users", JSON.stringify(user), { expires: 1 });
+            Cookies.set("token", token, { expires: 1 });
+          }
 
-            navigate("/");
-          },
+          loginSet();
+          
+          setEmailState({ email: "", emailError: "", emailValid: false });
+          setPasswordState({ password: "", passwordError: "", passwordValid: false });
+
+          toast.success("Login successful!");
+          navigate("/");
+        },
+        onError: () => {
+          toast.error("Something went wrong!");
         }
-      );
-    }
-  };
+      }
+    );
+  }
+};
 
   return (
     <Container className="p-5 my-5">
+    <ToastContainer />
       <Row className="align-items-center">
         <Col col="10" md="6">
           <img
@@ -103,17 +137,21 @@ const Login = () => {
             <Form.Group className="mb-4">
               <Form.Label>Email address</Form.Label>
               <Form.Control
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                onBlur={validateEmail}
-                isInvalid={emailValid}
-              />
+                  type="email"
+                  placeholder="Email"
+                  value={emailState.email}
+                  onChange={(e) => {
+                    setEmailState({
+                      ...emailState,
+                      email: e.target.value
+                    });
+                  }}
+                  onBlur={validateEmail}
+                  isInvalid={emailState.emailValid}
+                />
+
               <Form.Control.Feedback type="invalid">
-                {emailError}
+                {emailState.emailError}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -122,15 +160,18 @@ const Login = () => {
               <Form.Control
                 type="password"
                 placeholder="Password"
-                value={password}
+                value={passwordState.password}
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setPasswordState({
+                    ...passwordState,
+                    password: e.target.value
+                  });
                 }}
                 onBlur={validatePassword}
-                isInvalid={passwordValid}
+                isInvalid={passwordState.passwordValid}
               />
               <Form.Control.Feedback type="invalid">
-                {passwordError}
+                {passwordState.passwordError}
               </Form.Control.Feedback>
             </Form.Group>
 

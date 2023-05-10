@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
 import { useArticlePreference, useArticlePreferenceGet, useAuthorsGet, useCategoriesGet } from "../../api";
 import { sourcesData, Option } from "../../constants";
 import Cookies from "js-cookie";
+import { PageWrap } from "../../components";
 
 
 
@@ -14,7 +16,7 @@ const Preference = () => {
   const { data: authorData, isFetching: authorFetching } = useAuthorsGet();
   const { data: categoryData, isFetching: categoryFetching } = useCategoriesGet();
 
-  const { mutate } = useArticlePreference();
+  const { mutate, isLoading } = useArticlePreference();
 
   const [authors, setAuthor] = useState<string[]>([]);
   const [categories, setCategory] = useState<string[]>([]);
@@ -64,12 +66,12 @@ const Preference = () => {
       mutate(
         { id: user_id, categories, sources, authors },
         {
-          onSuccess: (response: any) => {
-            console.log(response);
+          onSuccess: () => {
+            toast.success("Preference update successful!");
           },
   
-          onError: (error: any) => {
-            console.error(error);
+          onError: () => {
+            toast.success("Something went wrong!");
           },
         }
       );
@@ -78,22 +80,13 @@ const Preference = () => {
 
 
   if (preferencesFetching) {
-    return (
-      <div className="page-wrap d-flex flex-row align-items-center">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-md-12 text-center">
-              <span className="display-1 d-block">Be patience....</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return  <PageWrap heading="Be patience...." subheading="page is almost ready" />; 
   }
 
 
   return (
     <Container>
+    <ToastContainer />
       <Row className="mt-5">
         <Col>
           <h1 className="mb-4">Preferences</h1>
@@ -150,8 +143,8 @@ const Preference = () => {
                 ))}
               </Col>
             </Row>
-            <Button type="submit" className="mt-3">
-              Save
+            <Button type="submit" className="mt-3" disabled={isLoading}>
+              {isLoading ? "processing..." : "Save"}
             </Button>
           </Form>
         </Col>

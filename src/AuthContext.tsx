@@ -22,9 +22,9 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const token = Cookies.get("token");
   const user = Cookies.get("users");
-
+  
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    (token !== undefined || user !== undefined) ? true : false
+    (token !== undefined && user !== undefined) ? true : false
   );
 
   const loginSet = () => {

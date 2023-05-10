@@ -2,107 +2,124 @@
 import { useState } from "react";
 import { Form, Button, Container, Row, Card, Col, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useSignUp } from "../../api";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const { mutate, isLoading } = useSignUp();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordConfirmError, setPasswordConfirmError] = useState("");
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  });
 
-  const [nameValid, setNameValid] = useState(false);
-  const [emailValid, setEmailValid] = useState(false);
-  const [passwordValid, setPasswordValid] = useState(false);
-  const [passwordConfirmValid, setPasswordConfirmValid] = useState(false);
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  });
 
-  const validateName = () => {
-    if (!name) {
-      setNameError("Name is required");
-      setNameValid(true);
-    } else {
-      setNameError("");
-      setNameValid(false);
-    }
+  const handleChange = (event: { target: { name: any; value: any } }) => {
+    const { name, value } = event.target;
+    setValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
   };
 
-  const validateEmail = () => {
-    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (!email) {
-      setEmailError("Email is required");
-      setEmailValid(true);
-    } else if (!emailRegex.test(email)) {
-      setEmailError("Invalid email address");
-      setEmailValid(true);
-    } else {
-      setEmailError("");
-      setEmailValid(false);
-    }
+  const handleBlur = (event: { target: { name: any } }) => {
+    const { name } = event.target;
+    validateField(name);
   };
 
-  const validatePassword = () => {
-    if (!password) {
-      setPasswordError("Password is required");
-      setPasswordValid(true);
-    } else if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
-      setPasswordValid(true);
-    } else {
-      setPasswordError("");
-      setPasswordValid(false);
+  const validateField = (name: string) => {
+    let error = "";
+    switch (name) {
+      case "name":
+        if (!values.name) {
+          error = "Name is required";
+        }
+        break;
+      case "email":
+        if (!values.email) {
+          error = "Email is required";
+        } else {
+          const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+          if (!emailRegex.test(values.email)) {
+            error = "Invalid email address";
+          }
+        }
+        break;
+      case "password":
+        if (!values.password) {
+          error = "Password is required";
+        } else if (values.password.length < 8) {
+          error = "Password must be at least 8 characters long";
+        }
+        break;
+      case "passwordConfirm":
+        if (!values.passwordConfirm) {
+          error = "Confirm Password is required";
+        } else if (values.password !== values.passwordConfirm) {
+          error = "Passwords do not match";
+        }
+        break;
+      default:
+        break;
     }
-  };
-
-  const validatePasswordConfirm = () => {
-    if (!passwordConfirm) {
-      setPasswordConfirmError("Confirm Password is required");
-      setPasswordConfirmValid(true);
-    } else if (password !== passwordConfirm) {
-      setPasswordConfirmError("Passwords are not match");
-      setPasswordConfirmValid(true);
-    } else {
-      setPasswordConfirmError("");
-      setPasswordConfirmValid(false);
-    }
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
   };
 
   const handleValidation = () => {
-    validateName();
-    validateEmail();
-    validatePassword();
-    validatePasswordConfirm();
-
-    if (nameError || emailError || passwordError || passwordConfirmError) {
+    const { name, email, password, passwordConfirm } = values;
+    validateField("name");
+    validateField("email");
+    validateField("password");
+    validateField("passwordConfirm");
+    if (
+      errors.name ||
+      errors.email ||
+      errors.password ||
+      errors.passwordConfirm
+    ) {
       return false;
     }
     return true;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (handleValidation()) {
       mutate(
         {
-          name: name,
-          email: email,
-          password: password,
-          password_confirmation: passwordConfirm,
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          password_confirmation: values.passwordConfirm,
         },
         {
           onSuccess: () => {
-            setName("");
-            setEmail("");
-            setPassword("");
-            setPasswordConfirm("");
-
+            setValues({
+              name: "",
+              email: "",
+              password: "",
+              passwordConfirm: "",
+            });
+            toast.success("Sign up successful!");
             navigate("/login");
           },
+
+          onError: () => {
+            toast.error("Something went wrong!");
+          }
         }
       );
     }
@@ -110,6 +127,7 @@ const SignUp = () => {
 
   return (
     <Container className="p-5 my-5">
+      <ToastContainer />
       <Row className="align-items-center">
         <Col col="10" md="6">
           <img
@@ -126,15 +144,14 @@ const SignUp = () => {
               <Form.Control
                 type="text"
                 placeholder="Name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-                onBlur={validateName}
-                isInvalid={nameValid}
+                name="name"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.name}
               />
               <Form.Control.Feedback type="invalid">
-                {nameError}
+                {errors.name}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -143,15 +160,14 @@ const SignUp = () => {
               <Form.Control
                 type="email"
                 placeholder="Email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                onBlur={validateEmail}
-                isInvalid={emailValid}
+                name="email"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.email}
               />
               <Form.Control.Feedback type="invalid">
-                {emailError}
+                {errors.email}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -160,15 +176,14 @@ const SignUp = () => {
               <Form.Control
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                onBlur={validatePassword}
-                isInvalid={passwordValid}
+                name="password"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.password}
               />
               <Form.Control.Feedback type="invalid">
-                {passwordError}
+                {errors.password}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -177,15 +192,14 @@ const SignUp = () => {
               <Form.Control
                 type="password"
                 placeholder="Confirm Password"
-                value={passwordConfirm}
-                onChange={(e) => {
-                  setPasswordConfirm(e.target.value);
-                }}
-                onBlur={validatePasswordConfirm}
-                isInvalid={passwordConfirmValid}
+                name="passwordConfirm"
+                value={values.passwordConfirm}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.passwordConfirm}
               />
               <Form.Control.Feedback type="invalid">
-                {passwordConfirmError}
+                {errors.passwordConfirm}
               </Form.Control.Feedback>
             </Form.Group>
 
