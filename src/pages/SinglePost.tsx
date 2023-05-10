@@ -41,22 +41,22 @@ const SinglePost = () => {
           filteredData ? (
         <Col>
           
-          <h2 className="entry-title">{filteredData[0].title}</h2>
-          <Image src={filteredData[0].urlToImage || "https://s.aolcdn.com/images/dims?client=fh7w6q744eiognjk&signature=d59d0cf6af1d779a3dca451e0ba259c33bbc6115&image_uri=https%3A%2F%2Fs.aolcdn.com%2Fos%2Fab%2F_cms%2F2019%2F08%2F30142658%2F2020-jeep-wrangler-16.jpg&thumbnail=750%2C422&quality=80"} fluid />
+          <h2 className="entry-title">{filteredData[0]?.title}</h2>
+          <Image src={filteredData[0]?.urlToImage || "https://s.aolcdn.com/images/dims?client=fh7w6q744eiognjk&signature=d59d0cf6af1d779a3dca451e0ba259c33bbc6115&image_uri=https%3A%2F%2Fs.aolcdn.com%2Fos%2Fab%2F_cms%2F2019%2F08%2F30142658%2F2020-jeep-wrangler-16.jpg&thumbnail=750%2C422&quality=80"} fluid />
 
           <div className="post-content mt-4">
             <div className="entry-meta mb-3">
               <p className="mb-0">
                 <small className="text-muted">
-                  {dateConversion(filteredData[0].date)} by <a href="#">{filteredData[0].author}</a>
+                  {dateConversion(filteredData[0]?.date)} by <a href="#">{filteredData[0]?.author}</a>
                 </small>
               </p>
               <p className="mb-0">
-                <small className="text-muted">{filteredData[0].category}</small>
+                <small className="text-muted">{filteredData[0]?.category}</small>
               </p>
             </div>
             <div className="entry-content">
-              <p>{filteredData[0].description}</p>
+              <p>{filteredData[0]?.description}</p>
             </div>
           </div>
         </Col>
