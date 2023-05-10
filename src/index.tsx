@@ -1,33 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+/** @format */
 
-import { QueryClient, QueryClientProvider } from 'react-query'
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import reportWebVitals from './reportWebVitals';
-import App from './App';
+import { QueryClient, QueryClientProvider } from "react-query";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
+import reportWebVitals from "./reportWebVitals";
+import App from "./App";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
+import { AuthProvider } from "./AuthContext";
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       keepPreviousData: true,
-      staleTime: Infinity
-    }
-  }
+      staleTime: Infinity,
+    },
+  },
 });
-
-
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 

@@ -8,7 +8,6 @@ import { AuthContext } from "../AuthContext";
 const Header = () => {
   const { isLoggedIn, logout } = useContext(AuthContext);
   
-  console.log(isLoggedIn);
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
