@@ -38,6 +38,7 @@ export interface PreferenceProps {
     urlToImage: string;
   }
 
+  
 
   export function getAuthorizationHeader() {
     const token = Cookies.get("token");

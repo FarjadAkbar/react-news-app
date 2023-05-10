@@ -2,6 +2,7 @@
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import { dateConversion } from "../utils";
 import { PostDataProps } from "../constants";
+import { Link } from "react-router-dom";
 
 
 
@@ -12,11 +13,11 @@ const PostCard = ({ post }: { post: PostDataProps }) => {
       <Card.Body className="blog-container">
         <Badge className="tag">{post.category}</Badge>
       
-          <Card.Link href={`/posts/${post.id}`} className="dark-link">
+          <Link to={`post?id=${post.id}`}  className="dark-link">
             <Card.Title className="mt-1 mb-3 font-weight-bold text-dark">
                 {post.title}
             </Card.Title>
-          </Card.Link>
+          </Link>
         {/* <Card.Text className="card-text blog-desc mb-4">
           {post?.description?.slice(0, 150)}{" "}
           {post?.description?.length > 150 && "..."}
