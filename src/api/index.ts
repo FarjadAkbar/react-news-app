@@ -134,6 +134,7 @@ export function useArticlePreference() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("articles");
+        queryClient.invalidateQueries("preference");
       },
     }
   );
